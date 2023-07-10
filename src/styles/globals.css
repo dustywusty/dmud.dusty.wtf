@@ -1,0 +1,36 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.pi-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 1rem;
+  color: #F14F84;
+  text-decoration: none;
+}
+
+.terminal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+  height: 95vh;
+  min-width: 800px;
+  min-height: 600px;
+  box-sizing: border-box;
+  background-color: #000 !important;
+  color: #fff !important;
+}
