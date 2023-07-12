@@ -38,12 +38,12 @@ export default class MyTerminal extends Component {
       if (rawInput === "yes") {
         this.playerNameConfirmed = true;
         this.playerConnected = true;
-        this.terminal.current.pushToStdout(`Welcome ${this.playerName}, it's nice to see you!<br/><br/>I'm sorry, but this client isn't finished quite yet. :(<br/><br/>Please check back soon!`);
+        this.terminal.current.pushToStdout(`Welcome ${this.playerName}, this client isn't ready quite yet, but please check back soon(tm)!`);
       } else if (rawInput === "no") {
         this.playerName = "";
-        this.terminal.current.pushToStdout(`Then what should we call you?`);
+        this.terminal.current.pushToStdout(`What should we call you?`);
       } else {
-        this.terminal.current.pushToStdout(`Are you sure ${this.playerName}?`);
+        this.terminal.current.pushToStdout(`${this.playerName}, that's what you would like us to call you?`);
       }
       return;
     }
