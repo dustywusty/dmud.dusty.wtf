@@ -2,27 +2,21 @@ import React, { Component } from "react"
 import Terminal from "react-console-emulator"
 
 import { Player } from '../contexts/PlayerContext';
-
-const commands = {
-}
-
-const banner = "<pre>▓█████▄  ███▄ ▄███▓ █    ██ ▓█████▄ <br/>▒██▀ ██▌▓██▒▀█▀ ██▒ ██  ▓██▒▒██▀ ██▌<br/>░██   █▌▓██    ▓██░▓██  ▒██░░██   █▌<br/>░▓█▄   ▌▒██    ▒██ ▓▓█  ░██░░▓█▄   ▌<br/>░▒████▓ ▒██▒   ░██▒▒▒█████▓ ░▒████▓ <br/>▒▒▓  ▒ ░ ▒░   ░  ░░▒▓▒ ▒ ▒  ▒▒▓  ▒ <br/>░ ▒  ▒ ░  ░      ░░░▒░ ░ ░  ░ ▒  ▒ <br/>░ ░  ░ ░      ░    ░░░ ░ ░  ░ ░  ░ <br/>░           ░      ░        ░    <br/>░                           ░</pre>";
-const welcome = "Welcome traveler, what should we call you?"
+import { GAME_BANNER, WELCOME_MSG } from "@/util/constants";
 
 export default class MyTerminal extends Component {
+
+  playerConnected: boolean = false;
+  playerName: string = "";
+  playerNameConfirmed: boolean = false;
+  terminal: any;
+
+  // ...
 
   constructor(props: any) {
     super(props)
     this.terminal = React.createRef()
   }
-
-  // ...
-
-  playerConnected: boolean = false;
-  playerName: string = "";
-  playerNameConfirmed: boolean = false;
-
-  terminal: any;
 
   // ...
 
@@ -53,7 +47,6 @@ export default class MyTerminal extends Component {
       }
       return;
     }
-
   }
 
   render() {
@@ -62,21 +55,22 @@ export default class MyTerminal extends Component {
     const commandCallback = ({ command, args, rawInput, result }: any) => {
       if (!this.playerConnected) {
         this.handleConnect(rawInput);
+        this.terminal.current.pushToStdout("<br/>");
         return;
       }
 
-      if (result === null) {
-        const responses = ["What?", "What?", "Huh?", "?!?"];
-        const response = responses[Math.floor(Math.random() * responses.length)];
-
+      if (result === null) { // command not found
+        const response = ["What?", "Huh?"][Math.floor(Math.random() * 2)];
         this.terminal.current.pushToStdout(response);
       }
+
+      this.terminal.current.pushToStdout("<br/>");
     }
 
     return (
       <Terminal
         className="terminal"
-        commands={commands}
+        commands={{}}
         commandCallback={commandCallback}
         dangerMode={true}
         errorText=" "
@@ -84,7 +78,7 @@ export default class MyTerminal extends Component {
         noEchoBack={false}
         promptLabel={"> "}
         ref={this.terminal}
-        welcomeMessage={banner + "<br/>" + welcome}
+        welcomeMessage={GAME_BANNER + "<br/>" + WELCOME_MSG}
       />
     )
   }
