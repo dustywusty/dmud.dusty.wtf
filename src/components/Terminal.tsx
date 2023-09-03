@@ -1,85 +1,114 @@
 import React, { Component } from "react"
-import Terminal from "react-console-emulator"
+import Terminal from "react-console-emulator";
+import Spinner from "react-cli-spinners2";
 
-import { Player } from '../contexts/PlayerContext';
-import { GAME_BANNER, WELCOME_MSG } from "@/util/constants";
+// .. helpers
 
-export default class MyTerminal extends Component {
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  playerConnected: boolean = false;
-  playerName: string = "";
-  playerNameConfirmed: boolean = false;
-  terminal: any;
+const handleResponse = (terminal: typeof Terminal, response: string) => {
+  terminal?.pushToStdout(
+    <div dangerouslySetInnerHTML={{ __html: response }} className="response" />
+  );
+  terminal?.pushToStdout("<br/>");
+}
 
-  // ...
+const removeSpinner = () => {
+  const spinner = document.getElementById("spinner");
+  if (spinner) {
+    spinner.remove();
+  }
+}
+
+// ..
+
+export default class DMUDTerminal extends Component {
+  commands = {
+    exit: {
+      description: "Exit the game",
+      fn: () => this.sendCommand("exit"),
+    },
+    look: {
+      description: "Look around",
+      fn: () => this.sendCommand("look"),
+    },
+    say: {
+      description: "Say something",
+      fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
+    }
+  };
+  spinners: typeof Spinner[] = [];
+  terminal: typeof Terminal | null = null;
+  ws: WebSocket | null = null;
 
   constructor(props: any) {
-    super(props)
+    super(props);
     this.terminal = React.createRef()
   }
 
-  // ...
+  componentDidMount() {
+    this.connect();
+  }
 
-  handleConnect = (rawInput: string) => {
-    const player: Player = this.context?.player;
+  componentWillUnmount() {
+    this.shutdown();
+  }
 
-    const validatePlayerName = (rawInput: string) => {
-      return /^[a-zA-Z]+$/i.test(rawInput) && rawInput !== "no";
-    };
-
-    if (this.playerName === "" && !validatePlayerName(rawInput)) {
-      this.terminal.current.pushToStdout("What should we call you?");
-      return;
-    } else if (this.playerName === "" && !["yes", "no"].includes(rawInput)) {
-      this.playerName = rawInput;
+  addSpinner(message?: string) {
+    const terminal = this.terminal?.current;
+    if (terminal) {
+      terminal.pushToStdout(
+        <div id="spinner">
+          <Spinner spinner="dots12" /> {message}
+        </div>
+      );
     }
+  }
 
-    if (!this.playerNameConfirmed) {
-      if (rawInput === "yes") {
-        this.playerNameConfirmed = true;
-        this.playerConnected = true;
-        this.terminal.current.pushToStdout(`Welcome ${this.playerName}, this client isn't ready quite yet, but please check back soon(tm)!`);
-      } else if (rawInput === "no") {
-        this.playerName = "";
-        this.terminal.current.pushToStdout(`What should we call you?`);
-      } else {
-        this.terminal.current.pushToStdout(`${this.playerName}, that's what you would like us to call you?`);
-      }
-      return;
+
+  async connect() {
+    const terminal = this.terminal?.current;
+
+    this.addSpinner("Connecting to server");
+    await delay(2500);
+
+    this.ws = new WebSocket("ws://localhost:8080/")
+    this.ws.onclose = () => console.info("WebSocket connection closed");
+    this.ws.onerror = (error) => console.error("WebSocket error: ", error);
+    this.ws.onmessage = (event) => {
+      handleResponse(terminal, event.data);
+    }
+    this.ws.onopen = async () => {
+      console.info("WebSocket connection opened");
+      removeSpinner();
+      handleResponse(terminal, "Welcome to DMUD!");
+    };
+  }
+
+  async sendCommand(command: string) {
+    const ws = this.ws;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(command.trimEnd());
+    }
+  };
+
+  shutdown() {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.close();
     }
   }
 
   render() {
-    const player: Player = this.context?.player;
-
-    const commandCallback = ({ command, args, rawInput, result }: any) => {
-      if (!this.playerConnected) {
-        this.handleConnect(rawInput);
-        this.terminal.current.pushToStdout("<br/>");
-        return;
-      }
-
-      if (result === null) { // command not found
-        const response = ["What?", "Huh?"][Math.floor(Math.random() * 2)];
-        this.terminal.current.pushToStdout(response);
-      }
-
-      this.terminal.current.pushToStdout("<br/>");
-    }
-
     return (
       <Terminal
-        className="terminal"
-        commands={{}}
-        commandCallback={commandCallback}
+        autoFocus={true}
+        commands={this.commands}
         dangerMode={true}
-        errorText=" "
-        noDefaults={false}
-        noEchoBack={false}
-        promptLabel={"> "}
+        noNewlineParsing={true}
+        onClick={this.terminal.focusTerminal}
+        promptLabel={" "}
         ref={this.terminal}
-        welcomeMessage={GAME_BANNER + "<br/>" + WELCOME_MSG}
       />
-    )
+    );
   }
 }

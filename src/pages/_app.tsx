@@ -3,14 +3,10 @@ import { Analytics } from "@vercel/analytics/react";
 
 import "../styles/globals.css";
 
-import PlayerProvider from "../providers/PlayerProvider";
-
 export default function App({ Component, pageProps, router }: AppProps) {
   return (
     <main>
-      <PlayerProvider>
-        <Component {...pageProps} />
-      </PlayerProvider>
+      <Component {...pageProps} />
       <Analytics />
       <a href="https://github.com/dustywusty/dmud.dusty.wtf" target="_blank" className="pi-icon">&#960;</a>
     </main>

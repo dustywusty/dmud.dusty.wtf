@@ -1,11 +1,15 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 
-import Terminal from "../components/Terminal";
+const DynamicTerminal = dynamic(
+  () => import("../components/Terminal"),
+  { ssr: false }
+);
 
 interface HomeProps { }
 
 const Home: NextPage<HomeProps> = ({ }) => (
-  <Terminal />
+  <DynamicTerminal />
 );
 
 export default Home;

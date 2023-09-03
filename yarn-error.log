@@ -1,8 +1,8 @@
 Arguments: 
-  /home/d/.nvm/versions/node/v18.15.0/bin/node /home/d/.nvm/versions/node/v18.15.0/bin/yarn add @types/react-console-emulator
+  /home/d/.nvm/versions/node/v18.15.0/bin/node /home/d/.nvm/versions/node/v18.15.0/bin/yarn add @types/xterm-theme
 
 PATH: 
-  /home/d/.local/bin:/usr/local/go/bin:/home/d/go/bin:/home/d/.vscode-server-insiders/bin/660393deaaa6d1996740ff4880f1bad43768c814/bin/remote-cli:/home/d/.nvm/versions/node/v18.15.0/bin:/home/d/.local/bin:/usr/local/go/bin:/home/d/go/bin:/home/d/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files (x86)/VMware/VMware Workstation/bin/:/mnt/c/Program Files/Common Files/Oracle/Java/javapath:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/Docker/host/bin:/mnt/c/Program Files/PuTTY/:/mnt/c/Users/d/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/d/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/d/AppData/Local/GitHubDesktop/bin:/mnt/c/Users/d/.dotnet/tools:/mnt/c/Users/d/AppData/Local/JetBrains/Toolbox/scripts:/mnt/c/Users/d/AppData/Local/gitkraken/bin:/mnt/c/Users/d/AppData/Local/Microsoft/WindowsApps:/mnt/c/Program Files/JetBrains/GoLand 2023.1/bin:/mnt/c/Users/d/AppData/Local/Programs/Microsoft VS Code Insiders/bin
+  /home/d/.local/bin:/usr/local/go/bin:/home/d/go/bin:/home/d/.vscode-server-insiders/bin/9800cf6dd6bf4634889d60720ef46a400f3a7298/bin/remote-cli:/home/d/.nvm/versions/node/v18.15.0/bin:/home/d/.local/bin:/usr/local/go/bin:/home/d/go/bin:/home/d/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files (x86)/VMware/VMware Workstation/bin/:/mnt/c/Program Files/Common Files/Oracle/Java/javapath:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/Docker/host/bin:/mnt/c/Program Files/PuTTY/:/mnt/c/Users/d/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/d/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/d/AppData/Local/GitHubDesktop/bin:/mnt/c/Users/d/.dotnet/tools:/mnt/c/Users/d/AppData/Local/JetBrains/Toolbox/scripts:/mnt/c/Users/d/AppData/Local/gitkraken/bin:/mnt/c/Users/d/AppData/Local/Microsoft/WindowsApps:/mnt/c/Program Files/JetBrains/GoLand 2023.1/bin:/mnt/c/Users/d/AppData/Local/Programs/Microsoft VS Code Insiders/bin
 
 Yarn version: 
   1.22.19
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2freact-console-emulator: Not found
+  Error: https://registry.yarnpkg.com/@types%2fxterm-theme: Not found
       at params.callback [as _callback] (/home/d/.nvm/versions/node/v18.15.0/lib/node_modules/yarn/lib/cli.js:66145:18)
       at self.callback (/home/d/.nvm/versions/node/v18.15.0/lib/node_modules/yarn/lib/cli.js:140890:22)
       at Request.emit (node:events:513:28)
@@ -52,11 +52,14 @@ npm manifest:
       "react": "18.2.0",
       "react-console-emulator": "^5.0.2",
       "react-dom": "18.2.0",
-      "react-icons": "^4.9.0",
+      "react-icons": "^4.10.1",
       "remark": "^14.0.3",
       "remark-html": "^15.0.2",
       "tailwindcss": "3.3.2",
-      "typescript": "5.1.3"
+      "typescript": "5.1.3",
+      "xterm": "^5.2.1",
+      "xterm-addon-fit": "^0.7.0",
+      "xterm-theme": "^1.1.0"
     }
   }
 
@@ -2639,10 +2642,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz#929a97a532304ce9fee4bcae44234f1ce2c21d49"
     integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
   
-  react-icons@^4.9.0:
-    version "4.9.0"
-    resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.9.0.tgz#ba44f436a053393adb1bdcafbc5c158b7b70d2a3"
-    integrity sha512-ijUnFr//ycebOqujtqtV9PFS7JjhWg0QU6ykURVHuL4cbofvRCf3f6GMn9+fBktEFQOIVZnuAYLZdiyadRQRFg==
+  react-icons@^4.10.1:
+    version "4.10.1"
+    resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
+    integrity sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==
   
   react-inner-html@^1.0.1:
     version "1.0.1"
@@ -3319,6 +3322,21 @@ Lockfile:
     version "1.0.2"
     resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
     integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
+  
+  xterm-addon-fit@^0.7.0:
+    version "0.7.0"
+    resolved "https://registry.yarnpkg.com/xterm-addon-fit/-/xterm-addon-fit-0.7.0.tgz#b8ade6d96e63b47443862088f6670b49fb752c6a"
+    integrity sha512-tQgHGoHqRTgeROPnvmtEJywLKoC/V9eNs4bLLz7iyJr1aW/QFzRwfd3MGiJ6odJd9xEfxcW36/xRU47JkD5NKQ==
+  
+  xterm-theme@^1.1.0:
+    version "1.1.0"
+    resolved "https://registry.yarnpkg.com/xterm-theme/-/xterm-theme-1.1.0.tgz#2e499c4dd6d2cf592c90389022095e1ce509bbbe"
+    integrity sha512-n2GocBEbqcz4vEl4OYkU93hEVia8GWdnqchiz/0nQ/olRUyhulGf4wfha23x/D2m0imWaIavRZtt8c6kWZXdsA==
+  
+  xterm@^5.2.1:
+    version "5.2.1"
+    resolved "https://registry.yarnpkg.com/xterm/-/xterm-5.2.1.tgz#b3fea7bdb55b9be1d4b31f4cd1091f26ac42afb8"
+    integrity sha512-cs5Y1fFevgcdoh2hJROMVIWwoBHD80P1fIP79gopLHJIE4kTzzblanoivxTiQ4+92YM9IxS36H1q0MxIJXQBcA==
   
   yallist@^4.0.0:
     version "4.0.0"
