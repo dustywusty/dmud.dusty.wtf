@@ -10,7 +10,6 @@ const handleResponse = (terminal: typeof Terminal, response: string) => {
   terminal?.pushToStdout(
     <div dangerouslySetInnerHTML={{ __html: response }} className="response" />
   );
-  terminal?.pushToStdout("<br/>");
 }
 
 const removeSpinner = () => {
@@ -35,6 +34,18 @@ export default class DMUDTerminal extends Component {
     say: {
       description: "Say something",
       fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
+    },
+    shout: {
+      description: "Shout something",
+      fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")}`),
+    },
+    move: {
+      description: "Move in a direction",
+      fn: (...args: string[]) => this.sendCommand(`${args.join(" ")}`),
+    },
+    who: {
+      description: "List players online",
+      fn: () => this.sendCommand("who"),
     }
   };
   spinners: typeof Spinner[] = [];
@@ -65,7 +76,6 @@ export default class DMUDTerminal extends Component {
     }
   }
 
-
   async connect() {
     const terminal = this.terminal?.current;
 
@@ -73,15 +83,23 @@ export default class DMUDTerminal extends Component {
     await delay(2500);
 
     this.ws = new WebSocket("ws://localhost:8080/")
-    this.ws.onclose = () => console.info("WebSocket connection closed");
+    this.ws.onclose = (e) => {
+      console.info("WebSocket connection closed");
+      terminal.pushToStdout(
+        <div className="error">
+          Connection closed!
+        </div>
+      );
+      this.connect();
+    }
     this.ws.onerror = (error) => console.error("WebSocket error: ", error);
     this.ws.onmessage = (event) => {
+      console.info("WebSocket message received: ", event.data);
       handleResponse(terminal, event.data);
     }
     this.ws.onopen = async () => {
       console.info("WebSocket connection opened");
       removeSpinner();
-      handleResponse(terminal, "Welcome to DMUD!");
     };
   }
 
@@ -104,6 +122,7 @@ export default class DMUDTerminal extends Component {
         autoFocus={true}
         commands={this.commands}
         dangerMode={true}
+        hideInput={true}
         noNewlineParsing={true}
         onClick={this.terminal.focusTerminal}
         promptLabel={" "}

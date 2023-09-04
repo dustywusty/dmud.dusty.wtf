@@ -34,15 +34,18 @@ div[name="react-console-emulator"] {
   overflow: hidden;
 }
 
-div[name="react-console-emulator__content"]>div>div:not(.response) {
+div[name="react-console-emulator__content"]>div>div:not(.response):not(.error):not(#spinner) {
   border-left: 3px solid #F14F84;
   padding-left: 10px;
-  margin-bottom: 20px;
+}
+
+div[name="react-console-emulator__content"] div.error {
+  border-left: 3px solid #ff4a4a;
+  padding-left: 10px;
 }
 
 div[name="react-console-emulator__inputArea"] {
   position: fixed;
-  bottom: 20px;
   left: 20px;
   width: calc(100% - 40px);
   display: flex;
@@ -50,13 +53,17 @@ div[name="react-console-emulator__inputArea"] {
 }
 
 div[name="react-console-emulator__inputArea"]::before {
-  content: ">>";
+  content: ">";
   padding-right: 7px;
-  font-family: monospace;
   color: #F14F84;
+  font-size: 1.25rem;
 }
 
-/* 
 div[name="react-console-emulator__content"]>div {
-  margin-bottom: 20px;
-} */
+  margin-bottom: 25px;
+}
+
+input[name="react-console-emulator__input"] {
+  color: #fff !important;
+  font-size: 1.0rem !important;
+}
