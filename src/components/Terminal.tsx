@@ -35,6 +35,10 @@ export default class DMUDTerminal extends Component {
       description: "Say something",
       fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
     },
+    scan: {
+      description: "Scan the area",
+      fn: () => this.sendCommand("scan"),
+    },
     shout: {
       description: "Shout something",
       fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")}`),
@@ -49,6 +53,9 @@ export default class DMUDTerminal extends Component {
     }
   };
   spinners: typeof Spinner[] = [];
+  state = {
+    isConnected: false,
+  };
   terminal: typeof Terminal | null = null;
   ws: WebSocket | null = null;
 
@@ -84,6 +91,7 @@ export default class DMUDTerminal extends Component {
 
     this.ws = new WebSocket("ws://localhost:8080/")
     this.ws.onclose = (e) => {
+      this.setState({ isConnected: false });
       console.info("WebSocket connection closed");
       terminal.pushToStdout(
         <div className="error">
@@ -98,6 +106,7 @@ export default class DMUDTerminal extends Component {
       handleResponse(terminal, event.data);
     }
     this.ws.onopen = async () => {
+      this.setState({ isConnected: true });
       console.info("WebSocket connection opened");
       removeSpinner();
     };
@@ -120,12 +129,13 @@ export default class DMUDTerminal extends Component {
     return (
       <Terminal
         autoFocus={true}
+        autoscroll={true}
         commands={this.commands}
         dangerMode={true}
-        hideInput={true}
         noNewlineParsing={true}
         onClick={this.terminal.focusTerminal}
         promptLabel={" "}
+        readOnly={!this.state.isConnected}
         ref={this.terminal}
       />
     );
