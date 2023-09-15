@@ -23,10 +23,10 @@ html {
 
 div[name="react-console-emulator"] {
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: calc(100% - 50px);
   background-color: #000 !important;
   color: #fff;
   font-family: monospace;
@@ -46,10 +46,11 @@ div[name="react-console-emulator__content"] div.error {
 
 div[name="react-console-emulator__inputArea"] {
   position: fixed;
-  left: 20px;
-  width: calc(100% - 40px);
+  left: 18px;
   display: flex;
   align-items: center;
+  bottom: -15px;
+  background-color: #000;
 }
 
 div[name="react-console-emulator__inputArea"]::before {

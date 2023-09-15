@@ -27,13 +27,32 @@ export default class DMUDTerminal extends Component {
       description: "Exit the game",
       fn: () => this.sendCommand("exit"),
     },
+    help: {
+      description: "List available commands",
+      fn: () => {
+        const terminal = this.terminal?.current;
+        if (terminal) {
+          terminal.pushToStdout(
+            <div className="help">
+              <p>Available commands:</p>
+              <p>
+                {Object.keys(this.commands).map((command) => (
+                  <span key={command}>{command} </span>
+                ))}
+              </p>
+            </div>
+          );
+        }
+      },
+    },
     look: {
       description: "Look around",
       fn: () => this.sendCommand("look"),
     },
     say: {
       description: "Say something",
-      fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
+      fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")
+        }`),
     },
     scan: {
       description: "Scan the area",
@@ -41,11 +60,11 @@ export default class DMUDTerminal extends Component {
     },
     shout: {
       description: "Shout something",
-      fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")}`),
+      fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")} `),
     },
     move: {
       description: "Move in a direction",
-      fn: (...args: string[]) => this.sendCommand(`${args.join(" ")}`),
+      fn: (...args: string[]) => this.sendCommand(`${args.join(" ")} `),
     },
     who: {
       description: "List players online",
@@ -103,7 +122,7 @@ export default class DMUDTerminal extends Component {
     this.ws.onerror = (error) => console.error("WebSocket error: ", error);
     this.ws.onmessage = (event) => {
       console.info("WebSocket message received: ", event.data);
-      handleResponse(terminal, event.data);
+      handleResponse(terminal, `<pre>${event.data}</pre>`);
     }
     this.ws.onopen = async () => {
       this.setState({ isConnected: true });
@@ -132,6 +151,7 @@ export default class DMUDTerminal extends Component {
         autoscroll={true}
         commands={this.commands}
         dangerMode={true}
+        noDefaults={true}
         noNewlineParsing={true}
         onClick={this.terminal.focusTerminal}
         promptLabel={" "}
