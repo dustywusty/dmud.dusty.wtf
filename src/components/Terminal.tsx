@@ -110,8 +110,8 @@ export default class DMUDTerminal extends Component {
 
     this.ws = new WebSocket("ws://localhost:8080/")
     this.ws.onclose = (e) => {
+      console.info("WebSocket connection closed", e);
       this.setState({ isConnected: false });
-      console.info("WebSocket connection closed");
       terminal.pushToStdout(
         <div className="error">
           Connection closed!
@@ -125,8 +125,8 @@ export default class DMUDTerminal extends Component {
       handleResponse(terminal, event.data);
     }
     this.ws.onopen = async () => {
-      this.setState({ isConnected: true });
       console.info("WebSocket connection opened");
+      this.setState({ isConnected: true });
       removeSpinner();
     };
   }
