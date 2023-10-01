@@ -10,6 +10,7 @@ html {
   height: 100vh;
   overflow: hidden;
   background-color: #000;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .pi-icon {
@@ -57,8 +58,8 @@ div[name="react-console-emulator__inputArea"]::before {
   content: ">";
   padding-right: 7px;
   color: #FFF;
-  font-size: 1.25rem;
-  font-weight: bolder;
+  font-size: 1.0rem;
+  font-weight: normal;
 }
 
 div[name="react-console-emulator__content"]>div {
