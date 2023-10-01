@@ -8,8 +8,9 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const handleResponse = (terminal: typeof Terminal, response: string) => {
   terminal?.pushToStdout(
-    <div dangerouslySetInnerHTML={{ __html: response }} className="response" />
+    <div dangerouslySetInnerHTML={{ __html: `<pre>${response}</pre>` }} className="response" />
   );
+  terminal?.scrollToBottom();
 }
 
 const removeSpinner = () => {
@@ -51,8 +52,7 @@ export default class DMUDTerminal extends Component {
     },
     say: {
       description: "Say something",
-      fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")
-        }`),
+      fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
     },
     scan: {
       description: "Scan the area",
@@ -60,11 +60,11 @@ export default class DMUDTerminal extends Component {
     },
     shout: {
       description: "Shout something",
-      fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")} `),
+      fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")}`),
     },
     move: {
       description: "Move in a direction",
-      fn: (...args: string[]) => this.sendCommand(`${args.join(" ")} `),
+      fn: (...args: string[]) => this.sendCommand(`${args.join(" ")}`),
     },
     who: {
       description: "List players online",
@@ -122,7 +122,7 @@ export default class DMUDTerminal extends Component {
     this.ws.onerror = (error) => console.error("WebSocket error: ", error);
     this.ws.onmessage = (event) => {
       console.info("WebSocket message received: ", event.data);
-      handleResponse(terminal, `<pre>${event.data}</pre>`);
+      handleResponse(terminal, event.data);
     }
     this.ws.onopen = async () => {
       this.setState({ isConnected: true });
