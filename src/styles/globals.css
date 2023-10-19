@@ -36,7 +36,7 @@ div[name="react-console-emulator"] {
 }
 
 div[name="react-console-emulator__content"]>div>div:not(.response):not(.error):not(#spinner) {
-  border-left: 5px solid #F14F84;
+  border-left: 5px solid #505050;
   padding-left: 10px;
 }
 

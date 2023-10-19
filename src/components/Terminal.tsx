@@ -50,6 +50,10 @@ export default class DMUDTerminal extends Component {
       description: "Look around",
       fn: () => this.sendCommand("look"),
     },
+    kill: {
+      description: "Kill something",
+      fn: (...args: string[]) => this.sendCommand(`kill ${args.join(" ")}`),
+    },
     say: {
       description: "Say something",
       fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
@@ -78,18 +82,23 @@ export default class DMUDTerminal extends Component {
   terminal: typeof Terminal | null = null;
   ws: WebSocket | null = null;
 
+  // ----------------------------------------------------------------------
+
   constructor(props: any) {
     super(props);
     this.terminal = React.createRef()
   }
 
   componentDidMount() {
+    this.addSpinner("Connecting to server...");
     this.connect();
   }
 
   componentWillUnmount() {
     this.shutdown();
   }
+
+  // ----------------------------------------------------------------------
 
   addSpinner(message?: string) {
     const terminal = this.terminal?.current;
@@ -102,21 +111,25 @@ export default class DMUDTerminal extends Component {
     }
   }
 
+  clear() {
+    const terminal = this.terminal?.current;
+    if (terminal) {
+      terminal.state.stdout = [];
+    }
+  }
+
   async connect() {
+    await delay(2500);
+
     const terminal = this.terminal?.current;
 
-    this.addSpinner("Connecting to server");
-    await delay(2500);
+    this.clear();
 
     this.ws = new WebSocket("ws://localhost:8080/")
     this.ws.onclose = (e) => {
       console.info("WebSocket connection closed", e);
+      this.addSpinner("Connection lost, reconnecting");
       this.setState({ isConnected: false });
-      terminal.pushToStdout(
-        <div className="error">
-          Connection closed!
-        </div>
-      );
       this.connect();
     }
     this.ws.onerror = (error) => console.error("WebSocket error: ", error);

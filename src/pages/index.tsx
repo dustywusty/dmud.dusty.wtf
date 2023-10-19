@@ -9,7 +9,9 @@ const DynamicTerminal = dynamic(
 interface HomeProps { }
 
 const Home: NextPage<HomeProps> = ({ }) => (
-  <DynamicTerminal />
+  <>
+    <DynamicTerminal />
+  </>
 );
 
 export default Home;
