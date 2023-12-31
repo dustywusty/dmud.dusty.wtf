@@ -2,8 +2,6 @@ import React, { Component } from "react"
 import Terminal from "react-console-emulator";
 import Spinner from "react-cli-spinners2";
 
-// .. helpers
-
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const handleResponse = (terminal: typeof Terminal, response: string) => {
@@ -19,8 +17,6 @@ const removeSpinner = () => {
     spinner.remove();
   }
 }
-
-// ..
 
 export default class DMUDTerminal extends Component {
   commands = {
@@ -78,11 +74,11 @@ export default class DMUDTerminal extends Component {
   spinners: typeof Spinner[] = [];
   state = {
     isConnected: false,
+    reconnectionAttempts: 0,
+    maxReconnectionAttempts: 5,
   };
   terminal: typeof Terminal | null = null;
   ws: WebSocket | null = null;
-
-  // ----------------------------------------------------------------------
 
   constructor(props: any) {
     super(props);
@@ -97,8 +93,6 @@ export default class DMUDTerminal extends Component {
   componentWillUnmount() {
     this.shutdown();
   }
-
-  // ----------------------------------------------------------------------
 
   addSpinner(message?: string) {
     const terminal = this.terminal?.current;
