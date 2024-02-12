@@ -1,170 +1,131 @@
-import React, { Component } from "react"
-import Terminal from "react-console-emulator";
-import Spinner from "react-cli-spinners2";
+import React, { useState, useEffect, useRef } from "react";
+import Terminal from "react-console-emulator"; 
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { WebSocketService } from "@/services/WebSocketService";
 
-const handleResponse = (terminal: typeof Terminal, response: string) => {
-  terminal?.pushToStdout(
-    <div dangerouslySetInnerHTML={{ __html: `<pre>${response}</pre>` }} className="response" />
-  );
-  terminal?.scrollToBottom();
-}
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const removeSpinner = () => {
-  const spinner = document.getElementById("spinner");
-  if (spinner) {
-    spinner.remove();
-  }
-}
+const DMUDTerminal = () => {
+  const [isConnected, setIsConnected] = useState(false);
+  const maxReconnectionAttempts = 5;
+  const reconnectionAttempts = useRef(0);
+  const terminalRef = useRef<typeof Terminal | null>(null);
+  const wsService = useRef(new WebSocketService("ws://localhost:8080/"));
 
-export default class DMUDTerminal extends Component {
-  commands = {
-    exit: {
-      description: "Exit the game",
-      fn: () => this.sendCommand("exit"),
-    },
-    help: {
-      description: "List available commands",
-      fn: () => {
-        const terminal = this.terminal?.current;
-        if (terminal) {
-          terminal.pushToStdout(
-            <div className="help">
-              <p>Available commands:</p>
-              <p>
-                {Object.keys(this.commands).map((command) => (
-                  <span key={command}>{command} </span>
-                ))}
-              </p>
-            </div>
-          );
-        }
-      },
-    },
-    look: {
-      description: "Look around",
-      fn: () => this.sendCommand("look"),
-    },
-    kill: {
-      description: "Kill something",
-      fn: (...args: string[]) => this.sendCommand(`kill ${args.join(" ")}`),
-    },
-    say: {
-      description: "Say something",
-      fn: (...args: string[]) => this.sendCommand(`say ${args.join(" ")}`),
-    },
-    scan: {
-      description: "Scan the area",
-      fn: () => this.sendCommand("scan"),
-    },
-    shout: {
-      description: "Shout something",
-      fn: (...args: string[]) => this.sendCommand(`shout ${args.join(" ")}`),
-    },
-    move: {
-      description: "Move in a direction",
-      fn: (...args: string[]) => this.sendCommand(`${args.join(" ")}`),
-    },
-    who: {
-      description: "List players online",
-      fn: () => this.sendCommand("who"),
+  useEffect(() => {
+    wsService.current.connect(
+      handleOpen,
+      handleClose,
+      handleResponse,
+      handleError
+    );
+    return () => {
+      wsService.current.close();
+    };
+  }, []);
+
+  const handleOpen = () => {
+    reconnectionAttempts.current = 0;
+    setIsConnected(true);
+    console.info("WebSocket connection opened");
+  };
+
+  const handleClose = () => {
+    if (isConnected) {
+      console.info("WebSocket connection closed. Attempting to reconnect...");
+      handleReconnect();
     }
   };
-  spinners: typeof Spinner[] = [];
-  state = {
-    isConnected: false,
-    reconnectionAttempts: 0,
-    maxReconnectionAttempts: 5,
+
+  const handleError = (error: Event) => {
+    console.error("WebSocket error: ", error);
+    handleReconnect();
   };
-  terminal: typeof Terminal | null = null;
-  ws: WebSocket | null = null;
 
-  constructor(props: any) {
-    super(props);
-    this.terminal = React.createRef()
-  }
-
-  componentDidMount() {
-    this.addSpinner("Connecting to server...");
-    this.connect();
-  }
-
-  componentWillUnmount() {
-    this.shutdown();
-  }
-
-  addSpinner(message?: string) {
-    const terminal = this.terminal?.current;
-    if (terminal) {
-      terminal.pushToStdout(
-        <div id="spinner">
-          <Spinner spinner="dots12" /> {message}
-        </div>
+  const handleReconnect = () => {
+    if (reconnectionAttempts.current < maxReconnectionAttempts) {
+      reconnectionAttempts.current++;
+      console.info(
+        `Reconnection attempt ${reconnectionAttempts.current} of ${maxReconnectionAttempts}`
+      );
+      wsService.current.connect(
+        handleOpen,
+        handleClose,
+        handleResponse,
+        handleError
+      );
+    } else {
+      console.error(
+        `Failed to reconnect after ${maxReconnectionAttempts} attempts. Please refresh the page.`
       );
     }
   }
 
-  clear() {
-    const terminal = this.terminal?.current;
+  const handleResponse = (response: string) => {
+    const terminal = terminalRef.current;
     if (terminal) {
-      terminal.state.stdout = [];
-    }
-  }
-
-  async connect() {
-    await delay(2500);
-
-    const terminal = this.terminal?.current;
-
-    this.clear();
-
-    this.ws = new WebSocket("ws://localhost:8080/")
-    this.ws.onclose = (e) => {
-      console.info("WebSocket connection closed", e);
-      this.addSpinner("Connection lost, reconnecting");
-      this.setState({ isConnected: false });
-      this.connect();
-    }
-    this.ws.onerror = (error) => console.error("WebSocket error: ", error);
-    this.ws.onmessage = (event) => {
-      console.info("WebSocket message received: ", event.data);
-      handleResponse(terminal, event.data);
-    }
-    this.ws.onopen = async () => {
-      console.info("WebSocket connection opened");
-      this.setState({ isConnected: true });
-      removeSpinner();
-    };
-  }
-
-  async sendCommand(command: string) {
-    const ws = this.ws;
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(command.trimEnd());
+      terminal.pushToStdout(
+        <div dangerouslySetInnerHTML={{ __html: `<pre>${response}</pre>` }} />
+      );
     }
   };
 
-  shutdown() {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.close();
-    }
-  }
+  const sendCommand = (command: string) => {
+    wsService.current.send(command);
+  };
 
-  render() {
-    return (
-      <Terminal
-        autoFocus={true}
-        autoscroll={true}
-        commands={this.commands}
-        dangerMode={true}
-        noDefaults={true}
-        noNewlineParsing={true}
-        onClick={this.terminal.focusTerminal}
-        promptLabel={" "}
-        readOnly={!this.state.isConnected}
-        ref={this.terminal}
-      />
-    );
-  }
-}
+  const commands = {
+    exit: {
+      description: "Exit the game",
+      fn: () => sendCommand("exit"),
+    },
+    help: {
+      description: "List available commands",
+      fn: () => sendCommand("help"),
+    },
+    look: {
+      description: "Look around",
+      fn: () => sendCommand("look"),
+    },
+    kill: {
+      description: "Kill something",
+      fn: (...args: string[]) => sendCommand(`kill ${args.join(" ")}`),
+    },
+    say: {
+      description: "Say something",
+      fn: (...args: string[]) => sendCommand(`say ${args.join(" ")}`),
+    },
+    scan: {
+      description: "Scan the area",
+      fn: () => sendCommand("scan"),
+    },
+    shout: {
+      description: "Shout something",
+      fn: (...args: string[]) => sendCommand(`shout ${args.join(" ")}`),
+    },
+    move: {
+      description: "Move in a direction",
+      fn: (...args: string[]) => sendCommand(`${args.join(" ")}`),
+    },
+    who: {
+      description: "List players online",
+      fn: () => sendCommand("who"),
+    }
+  };
+
+  return (
+    <Terminal
+      autoFocus={true}
+      autoscroll={true}
+      commands={commands}
+      dangerMode={true}
+      noDefaults={true}
+      noNewlineParsing={true}
+      promptLabel=">"
+      readOnly={!isConnected}
+      ref={terminalRef}
+    />
+  );
+};
+
+export default DMUDTerminal;
